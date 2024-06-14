@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "1048927126291",
-    "project_id": "safedrive-36714",
-    "storage_bucket": "safedrive-36714.appspot.com"
+    "project_number": "994981518011",
+    "firebase_url": "https://carstats-8585a-default-rtdb.firebaseio.com",
+    "project_id": "carstats-8585a",
+    "storage_bucket": "carstats-8585a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1048927126291:android:69006dd6d75a04fd4c50e6",
+        "mobilesdk_app_id": "1:994981518011:android:6caec4eee3dccfd0d1279e",
         "android_client_info": {
           "package_name": "com.example.sdfinal"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBXBIHqRn2f7z50jyaH9BWXO0ha3AkmNNg"
+          "current_key": "AIzaSyAhN3HhuE2HOdfpqdTz3jO3uJzNCLJHQos"
         }
       ],
       "services": {

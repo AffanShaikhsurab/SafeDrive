@@ -25,18 +25,50 @@ class _NewUserPageState extends State<NewUserPage> {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> signUp() async {
-      final credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: emailAddress.text, password: passWord.text);
-      FirebaseFirestore.instance
+    // Future<void> signUp() async {
+    //   final credential = await FirebaseAuth.instance
+    //       .createUserWithEmailAndPassword(
+    //           email: emailAddress.text, password: passWord.text);
+    //   FirebaseFirestore.instance
+    //       .collection('Users')
+    //       .doc(credential.user?.uid)
+    //       .set({
+    //     'Full Name': fullName.text,
+    //     'Email Address': emailAddress.text,
+    //   });
+    // }
+
+Future<void> signUp() async {
+  try {
+    // Create a new user with Firebase Authentication
+    UserCredential credential = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: emailAddress.text, password: passWord.text);
+    
+    // Ensure the user is created successfully and the user ID is not null
+    if (credential.user != null) {
+      // Add user details to Firestore
+      await FirebaseFirestore.instance
           .collection('Users')
-          .doc(credential.user?.uid)
+          .doc(credential.user!.uid)
           .set({
         'Full Name': fullName.text,
         'Email Address': emailAddress.text,
       });
+    } else {
+      print('User creation failed.');
     }
+  } catch (e) {
+    // Handle different types of errors separately
+    if (e is FirebaseAuthException) {
+      print('Firebase Auth Error: ${e.message}');
+      // Handle FirebaseAuth-specific errors here (e.g., weak password, email already in use)
+    } else {
+      print('An error occurred: $e');
+      // Handle general errors here
+    }
+  }
+}
 
     return Scaffold(
       body: Container(

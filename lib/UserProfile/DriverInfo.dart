@@ -4,6 +4,9 @@ import 'package:sdfinal/UserProfile/InsuranceInfo.dart';
 import 'package:sdfinal/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DriverInfoPage extends StatefulWidget {
   const DriverInfoPage({super.key});
@@ -21,18 +24,67 @@ class _DriverInfoPageState extends State<DriverInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> driveInfoUpload() async {
-      FirebaseAuth auth = FirebaseAuth.instance;
-      FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser?.uid)
-          .update({
+
+Future<void> driveInfoUpload() async {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  String? uid = auth.currentUser?.uid;
+
+  if (uid == null) {
+    Fluttertoast.showToast(
+      msg: 'No user is currently signed in.',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
+    return;
+  }
+
+  DocumentReference userDocRef = FirebaseFirestore.instance.collection('Users').doc(uid);
+
+  try {
+    // Check if the document exists
+    DocumentSnapshot docSnapshot = await userDocRef.get();
+    if (docSnapshot.exists) {
+      // Document exists, proceed with the update
+      await userDocRef.update({
         'Date of Birth': dateOfBirth.text,
         'Phone Number': phoneNumber.text,
         'Driver License': driversLicense.text,
       });
+      Fluttertoast.showToast(
+        msg: 'Information updated successfully.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+    } else {
+      // Document does not exist, create it
+      await userDocRef.set({
+        'Date of Birth': dateOfBirth.text,
+        'Phone Number': phoneNumber.text,
+        'Driver License': driversLicense.text,
+      });
+      Fluttertoast.showToast(
+        msg: 'Information saved successfully.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
     }
-
+  } catch (e) {
+    // Handle potential errors
+    if (e.toString() != "") {
+      Fluttertoast.showToast(
+        msg: 'Firestore Error: ${e.toString()}',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+    } else {
+      Fluttertoast.showToast(
+        msg: 'An error occurred: $e',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  }
+}
     return Scaffold(
       body: Container(
         width: double.infinity,
